@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# gRPC
+genetic_pb2_grpc.py
+genetic_pb2.py

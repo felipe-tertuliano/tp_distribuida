@@ -6,12 +6,9 @@ import time
 import random
 import threading
 from concurrent import futures
-
 import grpc
-
 import genetic_pb2
 import genetic_pb2_grpc
-
 from genetic import create_individual, fitness, mutate
 
 ALL_NODES = {
@@ -32,7 +29,6 @@ resource_busy = False
 
 population = [create_individual() for _ in range(10)]
 
-
 class GeneticService(genetic_pb2_grpc.GeneticNodeServicer):
 
     def ReceiveIndividual(self, request, context):
@@ -47,7 +43,6 @@ class GeneticService(genetic_pb2_grpc.GeneticNodeServicer):
 
         return genetic_pb2.Ack(message="Individual received")
 
-
     def RequestCriticalSection(self, request, context):
         global resource_busy
 
@@ -59,7 +54,6 @@ class GeneticService(genetic_pb2_grpc.GeneticNodeServicer):
 
             return genetic_pb2.MutexReply(granted=False)
 
-
     def ReleaseCriticalSection(self, request, context):
         global resource_busy
 
@@ -70,7 +64,6 @@ class GeneticService(genetic_pb2_grpc.GeneticNodeServicer):
 
         return genetic_pb2.Ack(message="Released")
 
-
     def Heartbeat(self, request, context):
         global clock_offset
 
@@ -80,7 +73,6 @@ class GeneticService(genetic_pb2_grpc.GeneticNodeServicer):
         print(f"[Node {node_id}] Physical clock synchronized")
         return genetic_pb2.Ack(message="Clock synchronized")
 
-
     def Election(self, request, context):
         global leader_id
 
@@ -88,7 +80,6 @@ class GeneticService(genetic_pb2_grpc.GeneticNodeServicer):
             leader_id = node_id
 
         return genetic_pb2.Ack(message="Election processed")
-
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
@@ -102,7 +93,6 @@ def serve():
     print(f"[Node {node_id}] gRPC server started on port {port}")
 
     return server
-
 
 def synchronize_clocks():
     global clock_offset
@@ -128,7 +118,6 @@ def synchronize_clocks():
     except Exception as e:
         print(f"[Node {node_id}] Clock sync error: {e}")
 
-
 def request_critical_section():
     leader_address = ALL_NODES[leader_id]
 
@@ -141,7 +130,6 @@ def request_critical_section():
 
     return response.granted
 
-
 def release_critical_section():
     leader_address = ALL_NODES[leader_id]
 
@@ -151,7 +139,6 @@ def release_critical_section():
     stub.ReleaseCriticalSection(
         genetic_pb2.MutexRequest(node_id=node_id)
     )
-
 
 def send_individual(target_id, individual):
     global logical_clock
@@ -178,7 +165,6 @@ def send_individual(target_id, individual):
 
     except Exception as e:
         print(f"[Node {node_id}] RPC error: {e}")
-
 
 server = serve()
 
