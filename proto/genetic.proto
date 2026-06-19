@@ -1,0 +1,39 @@
+
+syntax = "proto3";
+
+service GeneticNode {
+    rpc ReceiveIndividual (IndividualMessage) returns (Ack);
+    rpc RequestCriticalSection (MutexRequest) returns (MutexReply);
+    rpc ReleaseCriticalSection (MutexRequest) returns (Ack);
+    rpc Heartbeat (HeartbeatMessage) returns (Ack);
+    rpc Election (ElectionMessage) returns (Ack);
+}
+
+message IndividualMessage {
+    repeated int32 genes = 1;
+    int32 fitness = 2;
+    int32 sender_id = 3;
+    int32 logical_clock = 4;
+    double physical_time = 5;
+}
+
+message MutexRequest {
+    int32 node_id = 1;
+}
+
+message MutexReply {
+    bool granted = 1;
+}
+
+message HeartbeatMessage {
+    int32 leader_id = 1;
+    double timestamp = 2;
+}
+
+message ElectionMessage {
+    int32 node_id = 1;
+}
+
+message Ack {
+    string message = 1;
+}
