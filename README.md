@@ -13,7 +13,7 @@
 ## Instalação
 
 ```bash
-pip install grpcio grpcio-tools
+pip install -r requirements.txt
 ```
 
 ## Gerar arquivos gRPC
