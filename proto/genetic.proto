@@ -1,4 +1,3 @@
-
 syntax = "proto3";
 
 service GeneticNode {
@@ -6,7 +5,9 @@ service GeneticNode {
     rpc RequestCriticalSection (MutexRequest) returns (MutexReply);
     rpc ReleaseCriticalSection (MutexRequest) returns (Ack);
     rpc Heartbeat (HeartbeatMessage) returns (Ack);
-    rpc Election (ElectionMessage) returns (Ack);
+    rpc Prepare (PrepareRequest) returns (PrepareReply);
+    rpc Commit (CommitRequest) returns (Ack);
+    rpc Abort (AbortRequest) returns (Ack);
 }
 
 message IndividualMessage {
@@ -30,10 +31,28 @@ message HeartbeatMessage {
     double timestamp = 2;
 }
 
-message ElectionMessage {
-    int32 node_id = 1;
-}
-
 message Ack {
     string message = 1;
+}
+
+message PrepareRequest {
+    int32 transaction_id = 1;
+    int32 sender_id = 2;
+    IndividualMessage individual = 3;
+}
+
+message PrepareReply {
+    bool ready = 1;
+    string message = 2;
+}
+
+message CommitRequest {
+    int32 transaction_id = 1;
+    int32 sender_id = 2;
+}
+
+message AbortRequest {
+    int32 transaction_id = 1;
+    int32 sender_id = 2;
+    string reason = 3;
 }
